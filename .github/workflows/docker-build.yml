@@ -1,0 +1,67 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      medusa_version:
+        description: 'Medusa version to build (e.g., v1.12.0)'
+        required: false
+        default: 'latest'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ secrets.DOCKER_USERNAME }}/medusa-backend
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=sha,prefix={{branch}}-
+          
+    - name: Clone Medusa repository
+      run: |
+        git clone https://github.com/medusajs/medusa.git medusa-source
+        cd medusa-source
+        if [ "${{ github.event.inputs.medusa_version }}" != "" ]; then
+          git checkout ${{ github.event.inputs.medusa_version }}
+        fi
+        
+    - name: Copy Medusa backend files
+      run: |
+        cp -r medusa-source/packages/medusa/dist/* ./dist/ || mkdir -p dist
+        cp medusa-source/packages/medusa/package.json ./package.json
+        cp medusa-source/packages/medusa/package-lock.json ./package-lock.json || echo "No package-lock.json found"
+        
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        platforms: linux/amd64,linux/arm64
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
