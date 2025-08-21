@@ -59,6 +59,8 @@ jobs:
         else
           echo "No package-lock.json found, will use npm install"
         fi
+        # Copy start.sh script
+        cp start.sh ./start.sh
         
     - name: Build and push Docker image
       uses: docker/build-push-action@v5

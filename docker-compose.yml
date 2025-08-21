@@ -16,7 +16,7 @@ services:
       - postgres
       - redis
     volumes:
-      - ./uploads:/app/uploads
+      - ./uploads:/server/uploads
     restart: unless-stopped
 
   postgres:

@@ -8,7 +8,9 @@ This repository contains a GitHub Actions workflow that automatically builds and
 - Builds multi-platform Docker images (linux/amd64, linux/arm64)
 - Supports manual workflow dispatch with custom Medusa versions
 - Uses Docker layer caching for faster builds
-- Pushes images to Docker Hub with proper tagging
+- Pushes images to GitHub Container Registry with proper tagging
+- Follows official Medusa Docker best practices
+- Includes database migrations and proper startup scripts
 
 ## Setup
 
