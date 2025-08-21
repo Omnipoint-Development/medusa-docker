@@ -2,7 +2,8 @@ version: '3.8'
 
 services:
   medusa-backend:
-    build: .
+    container_name: medusa-backend
+    image: ghcr.io/Omnipoint-Development/medusa-docker/medusa-backend:latest
     ports:
       - "9000:9000"
     environment:
@@ -19,6 +20,7 @@ services:
     restart: unless-stopped
 
   postgres:
+    container_name: medusa-postgres
     image: postgres:15-alpine
     environment:
       - POSTGRES_USER=medusa
@@ -31,6 +33,7 @@ services:
     restart: unless-stopped
 
   redis:
+    container_name: medusa-redis
     image: redis:7-alpine
     ports:
       - "6379:6379"
