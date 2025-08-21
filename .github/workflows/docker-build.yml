@@ -54,7 +54,11 @@ jobs:
       run: |
         cp -r medusa-source/packages/medusa/dist/* ./dist/ || mkdir -p dist
         cp medusa-source/packages/medusa/package.json ./package.json
-        cp medusa-source/packages/medusa/package-lock.json ./package-lock.json || echo "No package-lock.json found"
+        if [ -f medusa-source/packages/medusa/package-lock.json ]; then
+          cp medusa-source/packages/medusa/package-lock.json ./package-lock.json
+        else
+          echo "No package-lock.json found, will use npm install"
+        fi
         
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
