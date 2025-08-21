@@ -12,12 +12,13 @@ This repository contains a GitHub Actions workflow that automatically builds and
 
 ## Setup
 
-### 1. Repository Secrets
+### 1. Repository Permissions
 
-Add the following secrets to your GitHub repository:
+The workflow uses GitHub's built-in `GITHUB_TOKEN` secret, which is automatically available. Make sure your repository has the following permissions enabled:
 
-- `DOCKER_USERNAME`: Your Docker Hub username
-- `DOCKER_PASSWORD`: Your Docker Hub password or access token
+- Go to your repository Settings → Actions → General
+- Under "Workflow permissions", select "Read and write permissions"
+- Check "Allow GitHub Actions to create and approve pull requests"
 
 ### 2. Workflow Triggers
 
@@ -40,13 +41,13 @@ To manually trigger a build with a specific Medusa version:
 
 The built image will be available at:
 ```
-your-docker-username/medusa-backend:latest
+ghcr.io/your-username/medusa-docker/medusa-backend:latest
 ```
 
 ### Running the Container
 
 ```bash
-docker run -p 9000:9000 your-docker-username/medusa-backend:latest
+docker run -p 9000:9000 ghcr.io/your-username/medusa-docker/medusa-backend:latest
 ```
 
 ### Environment Variables
@@ -64,7 +65,7 @@ docker run -p 9000:9000 \
   -e REDIS_URL=redis://host:6379 \
   -e JWT_SECRET=your-jwt-secret \
   -e COOKIE_SECRET=your-cookie-secret \
-  your-docker-username/medusa-backend:latest
+  ghcr.io/your-username/medusa-docker/medusa-backend:latest
 ```
 
 ## Build Process
@@ -75,7 +76,7 @@ docker run -p 9000:9000 \
    - Installs dependencies
    - Builds the application
    - Creates optimized production image
-4. **Push to Registry**: Pushes the built image to Docker Hub
+4. **Push to Registry**: Pushes the built image to GitHub Container Registry
 
 ## Tags
 
